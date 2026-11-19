@@ -921,28 +921,28 @@ Section Install
 
   ; Remove stale window-state files
   DetailPrint "Removing window-state.json / .window-state.json"
-  Delete "$APPDATA\io.github.clash-verge-rev.clash-verge-rev\window-state.json"
-  Delete "$APPDATA\io.github.clash-verge-rev.clash-verge-rev\.window-state.json"
+  Delete "$APPDATA\cc.rhcloud.desktop\window-state.json"
+  Delete "$APPDATA\cc.rhcloud.desktop\.window-state.json"
 
   ; Clean legacy auto-launch registry entries
   StrCpy $R1 "Software\Microsoft\Windows\CurrentVersion\Run"
 
   SetRegView 64
-  ReadRegStr $R2 HKCU "$R1" "Clash Verge"
+  ReadRegStr $R2 HKCU "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKCU "$R1" "Clash Verge"
+    DeleteRegValue HKCU "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKLM "$R1" "Clash Verge"
+  ReadRegStr $R2 HKLM "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKLM "$R1" "Clash Verge"
+    DeleteRegValue HKLM "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKCU "$R1" "clash-verge"
+  ReadRegStr $R2 HKCU "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKCU "$R1" "clash-verge"
+    DeleteRegValue HKCU "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKLM "$R1" "clash-verge"
+  ReadRegStr $R2 HKLM "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKLM "$R1" "clash-verge"
+    DeleteRegValue HKLM "$R1" "RHCloud"
   ${EndIf}
 
   ; Remove legacy executables
@@ -1113,28 +1113,28 @@ Section Uninstall
   ; Remove cached window state files
   DetailPrint "Removing window-state.json / .window-state.json"
   SetShellVarContext current
-  Delete "$APPDATA\io.github.clash-verge-rev.clash-verge-rev\window-state.json"
-  Delete "$APPDATA\io.github.clash-verge-rev.clash-verge-rev\.window-state.json"
+  Delete "$APPDATA\cc.rhcloud.desktop\window-state.json"
+  Delete "$APPDATA\cc.rhcloud.desktop\.window-state.json"
 
   ; Clean legacy auto-launch registry entries
   StrCpy $R1 "Software\Microsoft\Windows\CurrentVersion\Run"
 
   SetRegView 64
-  ReadRegStr $R2 HKCU "$R1" "Clash Verge"
+  ReadRegStr $R2 HKCU "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKCU "$R1" "Clash Verge"
+    DeleteRegValue HKCU "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKLM "$R1" "Clash Verge"
+  ReadRegStr $R2 HKLM "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKLM "$R1" "Clash Verge"
+    DeleteRegValue HKLM "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKCU "$R1" "clash-verge"
+  ReadRegStr $R2 HKCU "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKCU "$R1" "clash-verge"
+    DeleteRegValue HKCU "$R1" "RHCloud"
   ${EndIf}
-  ReadRegStr $R2 HKLM "$R1" "clash-verge"
+  ReadRegStr $R2 HKLM "$R1" "RHCloud"
   ${If} $R2 != ""
-    DeleteRegValue HKLM "$R1" "clash-verge"
+    DeleteRegValue HKLM "$R1" "RHCloud"
   ${EndIf}
 
   ; Remove legacy executables
@@ -1264,8 +1264,8 @@ Section Uninstall
       ${EndIf}
       ReadRegStr $R3 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$R2" "DisplayName"
       ${If} $R3 != ""
-        StrCmp $R3 "Clash Verge" 0 +3
-        StrCmp $R3 "clash-verge" 0 +2
+        StrCmp $R3 "RHCloud Legacy" 0 +3
+        StrCmp $R3 "rhcloud-legacy" 0 +2
         DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$R2"
       ${EndIf}
       IntOp $R1 $R1 + 1

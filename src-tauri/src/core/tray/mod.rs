@@ -308,15 +308,8 @@ impl Tray {
         let tun_text = clash_verge_i18n::t!("tray.tooltip.tun");
         let profile_text = clash_verge_i18n::t!("tray.tooltip.profile");
 
-        let v = env!("CARGO_PKG_VERSION");
-        let reassembled_version = v.split_once('+').map_or_else(
-            || v.into(),
-            |(main, rest)| format!("{main}+{}", rest.split('.').next().unwrap_or("")),
-        );
-
         let tooltip = format!(
-            "Clash Verge {}\n{}: {}\n{}: {}\n{}: {}",
-            reassembled_version,
+            "RHCloud\n{}: {}\n{}: {}\n{}: {}",
             sys_proxy_text,
             switch_str(system_proxy),
             tun_text,
@@ -840,26 +833,12 @@ async fn create_tray_menu(
         menu_items.push(outbound_modes);
     }
 
-    menu_items.extend_from_slice(&[separator, profiles]);
-
-    match tray_proxy_groups_display_mode {
-        "default" => {
-            menu_items.extend(proxies_menu.iter().map(|item| item as &dyn IsMenuItem<_>));
-        }
-        "inline" if !inline_proxy_items.is_empty() => {
-            menu_items.extend(inline_proxy_items.iter().map(|item| item.as_ref()));
-        }
-        _ => {}
-    }
-
+    // RHCloud keeps the tray to the essentials; profiles, proxy groups and the
+    // advanced submenus stay out of the menu.
     menu_items.extend_from_slice(&[
         separator,
         system_proxy as &dyn IsMenuItem<Wry>,
         tun_mode as &dyn IsMenuItem<Wry>,
-        separator,
-        lightweight_mode as &dyn IsMenuItem<Wry>,
-        open_dir as &dyn IsMenuItem<Wry>,
-        more as &dyn IsMenuItem<Wry>,
         separator,
         quit as &dyn IsMenuItem<Wry>,
     ]);

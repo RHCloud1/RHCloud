@@ -358,7 +358,8 @@ impl IVerge {
             app_log_max_size: Some(128),
             app_log_max_count: Some(8),
             clash_core: Some("verge-mihomo".into()),
-            language: Some(clash_verge_i18n::system_language().into()),
+            // RHCloud ships a Chinese-only UI.
+            language: Some("zh".into()),
             theme_mode: Some("system".into()),
             #[cfg(not(target_os = "windows"))]
             env_type: Some("bash".into()),
@@ -403,7 +404,7 @@ impl IVerge {
             use_default_bypass: Some(true),
             proxy_guard_duration: Some(30),
             auto_close_connection: Some(true),
-            auto_check_update: Some(true),
+            auto_check_update: Some(false),
             enable_builtin_enhanced: Some(true),
             auto_log_clean: Some(2), // 1: 1天, 2: 7天, 3: 30天, 4: 90天
             enable_auto_backup_schedule: Some(false),
@@ -414,9 +415,9 @@ impl IVerge {
             webdav_password: None,
             #[cfg(target_os = "macos")]
             enable_tray_speed: Some(false),
-            tray_proxy_groups_display_mode: Some("default".into()),
-            tray_inline_outbound_modes: Some(false),
-            enable_global_hotkey: Some(true),
+            tray_proxy_groups_display_mode: Some("disable".into()),
+            tray_inline_outbound_modes: Some(true),
+            enable_global_hotkey: Some(false),
             enable_auto_light_weight_mode: Some(false),
             auto_light_weight_minutes: Some(10),
             enable_dns_settings: Some(false),

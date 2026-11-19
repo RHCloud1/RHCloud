@@ -8,16 +8,16 @@ use crate::{config::Config, core::handle, utils::resolve::window_script::build_w
 use clash_verge_logging::logging;
 use clash_verge_logging::{Type, logging_error};
 
-const DARK_BACKGROUND_COLOR: Color = Color(46, 48, 61, 255); // #2E303D
-const LIGHT_BACKGROUND_COLOR: Color = Color(245, 245, 245, 255); // #F5F5F5
-const DARK_BACKGROUND_HEX: &str = "#2E303D";
-const LIGHT_BACKGROUND_HEX: &str = "#F5F5F5";
+const DARK_BACKGROUND_COLOR: Color = Color(13, 23, 36, 255); // #0D1724
+const LIGHT_BACKGROUND_COLOR: Color = Color(244, 248, 252, 255); // #F4F8FC
+const DARK_BACKGROUND_HEX: &str = "#0D1724";
+const LIGHT_BACKGROUND_HEX: &str = "#F4F8FC";
 
-const DEFAULT_WIDTH: f64 = 940.0;
+const DEFAULT_WIDTH: f64 = 1040.0;
 const DEFAULT_HEIGHT: f64 = 700.0;
 
-const MINIMAL_WIDTH: f64 = 520.0;
-const MINIMAL_HEIGHT: f64 = 520.0;
+const MINIMAL_WIDTH: f64 = 880.0;
+const MINIMAL_HEIGHT: f64 = 600.0;
 
 #[cfg(target_os = "linux")]
 const DEFAULT_DECORATIONS: bool = false;
@@ -81,7 +81,7 @@ pub async fn build_new_window() -> Result<WebviewWindow, String> {
         "main", /* the unique window label */
         tauri::WebviewUrl::App(start_page.into()),
     )
-    .title("Clash Verge")
+    .title("RHCloud")
     .center()
     .decorations(DEFAULT_DECORATIONS)
     .fullscreen(false)

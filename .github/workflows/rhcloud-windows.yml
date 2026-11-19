@@ -1,0 +1,101 @@
+name: RHCloud Windows
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish a GitHub release v<version> with the installer'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rhcloud-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TARGET: x86_64-pc-windows-msvc
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.99.1'
+          targets: ${{ env.TARGET }}
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: 'v1-rust'
+          key: 'rhcloud-windows-${{ env.TARGET }}'
+          workspaces: |
+            . -> target
+          cache-all-crates: true
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          run_install: false
+
+      - name: Install Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.13.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies and sidecars
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run prebuild ${{ env.TARGET }}
+
+      - name: Build installer
+        run: pnpm build --target ${{ env.TARGET }}
+
+      - name: Locate installer
+        id: installer
+        shell: bash
+        run: |
+          file=$(ls target/${TARGET}/release/bundle/nsis/*.exe | head -n 1)
+          version=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          name="RHCloud-${version}-x64-setup.exe"
+          mkdir -p dist-installer
+          cp "$file" "dist-installer/$name"
+          (cd dist-installer && sha256sum "$name" | tee "$name.sha256")
+          echo "path=dist-installer/$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RHCloud-${{ steps.installer.outputs.version }}-x64-setup
+          path: dist-installer/
+          retention-days: 7
+
+      - name: Publish release
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v${{ steps.installer.outputs.version }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "::error::Release $tag already exists; bump the version first"
+            exit 1
+          fi
+          gh release create "$tag" dist-installer/* \
+            --target "$GITHUB_SHA" \
+            --title "RHCloud ${{ steps.installer.outputs.version }}" \
+            --notes "Windows x64 安装包。SHA256 见同名 .sha256 文件。"

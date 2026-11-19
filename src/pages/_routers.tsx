@@ -1,18 +1,28 @@
-import { createBrowserRouter, RouteObject } from 'react-router'
+import { createBrowserRouter, Navigate } from 'react-router'
 
-import Layout from './_layout'
-import { navItems } from './_navigation'
+import { AppLayout } from '@/rhcloud/layout/app-layout'
+import { RhShell } from '@/rhcloud/layout/rh-shell'
+import HomePage from '@/rhcloud/pages/home-page'
+import LoginPage from '@/rhcloud/pages/login-page'
+import NodesPage from '@/rhcloud/pages/nodes-page'
+import SettingsPage from '@/rhcloud/pages/settings-page'
 
+// RHCloud replaces the Clash Verge pages with its own login/home/nodes/settings screens.
 export const router = createBrowserRouter([
   {
     path: '/',
-    Component: Layout,
-    children: navItems.map(
-      (item) =>
-        ({
-          path: item.path,
-          Component: item.Component,
-        }) as RouteObject,
-    ),
+    Component: RhShell,
+    children: [
+      { path: 'login', Component: LoginPage },
+      {
+        Component: AppLayout,
+        children: [
+          { index: true, Component: HomePage },
+          { path: 'nodes', Component: NodesPage },
+          { path: 'settings', Component: SettingsPage },
+          { path: '*', element: <Navigate to="/" replace /> },
+        ],
+      },
+    ],
   },
 ])

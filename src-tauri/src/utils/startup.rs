@@ -19,13 +19,13 @@ pub(crate) fn report_error(error: &anyhow::Error) {
     });
     let message = match log_result {
         Ok(path) => format!(
-            "Clash Verge could not start.\n\n{detail}\n\nDiagnostic log:\n{}",
+            "RHCloud could not start.\n\n{detail}\n\nDiagnostic log:\n{}",
             path.display()
         ),
         Err(log_error) => {
             eprintln!("[clash-verge] failed to write startup log: {log_error:#}");
             format!(
-                "Clash Verge could not start.\n\n{detail}\n\nThe diagnostic log could not be written:\n{log_error:#}"
+                "RHCloud could not start.\n\n{detail}\n\nThe diagnostic log could not be written:\n{log_error:#}"
             )
         }
     };
