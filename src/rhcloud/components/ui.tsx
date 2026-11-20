@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import { useRhTokens } from '../theme'
+import { SIZE, useRhTokens } from '../theme'
 
 export const Card = ({
   children,
@@ -22,8 +22,8 @@ export const Card = ({
       aria-label={label}
       style={{
         boxSizing: 'border-box',
-        padding: 22,
-        borderRadius: 16,
+        padding: SIZE.pad,
+        borderRadius: SIZE.radius,
         background: t.surface,
         border: `1px solid ${t.border}`,
         ...style,
@@ -48,7 +48,8 @@ export const PageHeader = ({
       justifyContent: 'space-between',
       gap: 12,
       flexWrap: 'wrap',
-      marginBottom: 18,
+      minHeight: SIZE.control,
+      marginBottom: SIZE.gap,
     }}
   >
     <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>{title}</h1>
@@ -79,7 +80,7 @@ export const SwitchRow = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 16,
-        minHeight: 52,
+        minHeight: SIZE.row,
         borderBottom: divider ? `1px solid ${t.divider}` : undefined,
         cursor: disabled ? 'default' : 'pointer',
       }}
@@ -137,9 +138,9 @@ export const Button = ({
       disabled={disabled || loading}
       {...rest}
       style={{
-        height: 40,
+        height: SIZE.button,
         padding: '0 16px',
-        borderRadius: 10,
+        borderRadius: SIZE.controlRadius,
         font: 'inherit',
         fontSize: 14,
         fontWeight: 600,

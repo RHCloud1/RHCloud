@@ -30,6 +30,7 @@ import {
   BRAND_GRADIENT,
   formatLatency,
   latencyColor,
+  SIZE,
   useRhTokens,
 } from '../theme'
 
@@ -59,8 +60,10 @@ const ModeSwitch = () => {
       aria-label="代理模式"
       style={{
         display: 'flex',
+        height: SIZE.control,
+        boxSizing: 'border-box',
         padding: 3,
-        borderRadius: 10,
+        borderRadius: SIZE.controlRadius,
         background: t.track,
       }}
     >
@@ -73,10 +76,11 @@ const ModeSwitch = () => {
             aria-pressed={active}
             onClick={() => change(mode.value)}
             style={{
-              height: 32,
+              height: SIZE.control - 6,
+              minWidth: 72,
               padding: '0 18px',
               border: 0,
-              borderRadius: 8,
+              borderRadius: SIZE.controlRadius - 3,
               font: 'inherit',
               fontSize: 14,
               fontWeight: active ? 600 : 400,
@@ -119,9 +123,9 @@ const ConnectionCard = () => {
   return (
     <Card
       label="连接"
-      style={{ display: 'flex', flexDirection: 'column', gap: 20 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: SIZE.gap }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: SIZE.pad }}>
         <button
           type="button"
           aria-label={connected ? '断开连接' : '连接'}
@@ -240,7 +244,13 @@ const ConnectionCard = () => {
           </LinkButton>
         </div>
       </div>
-      <div style={{ borderTop: `1px solid ${t.border}`, paddingTop: 8 }}>
+      <div
+        style={{
+          marginTop: 'auto',
+          borderTop: `1px solid ${t.border}`,
+          paddingTop: 4,
+        }}
+      >
         <SwitchRow
           title="系统代理"
           description="浏览器等大多数应用会自动走代理"
@@ -384,7 +394,7 @@ const AccountCard = () => {
         )
       )}
       <div style={{ flexGrow: 1 }} />
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', gap: 12 }}>
         <Button loading={syncing} onClick={onSync} style={{ flex: 1 }}>
           同步订阅
         </Button>
@@ -443,9 +453,8 @@ const TrafficCard = () => {
       label="实时流量"
       style={{
         display: 'flex',
-        gap: 28,
+        gap: SIZE.pad,
         alignItems: 'stretch',
-        padding: '18px 22px',
       }}
     >
       <div
@@ -521,12 +530,12 @@ const TrafficCard = () => {
 const HomePage = () => (
   <>
     <PageHeader title="首页" actions={<ModeSwitch />} />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: SIZE.gap }}>
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 18,
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: SIZE.gap,
         }}
       >
         <ConnectionCard />

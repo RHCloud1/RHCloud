@@ -18,7 +18,7 @@ import {
 } from '../components/ui'
 import { useCloud } from '../hooks'
 import { storage } from '../storage'
-import { useRhTokens } from '../theme'
+import { SIZE, useRhTokens } from '../theme'
 
 const THEMES = [
   { value: 'light', label: '浅色' },
@@ -35,10 +35,10 @@ const Section = ({
 }) => {
   const t = useRhTokens()
   return (
-    <Card label={title} style={{ padding: '6px 20px 14px' }}>
+    <Card label={title} style={{ paddingTop: SIZE.pad - 4, paddingBottom: 4 }}>
       <h2
         style={{
-          margin: '12px 0 4px',
+          margin: 0,
           fontSize: 13,
           fontWeight: 600,
           color: t.text2,
@@ -68,7 +68,7 @@ const Row = ({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
-        minHeight: 52,
+        minHeight: SIZE.row,
         borderBottom: divider ? `1px solid ${t.divider}` : undefined,
       }}
     >
@@ -106,128 +106,132 @@ const SettingsPage = () => {
       <PageHeader title="设置" />
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 16,
-          alignItems: 'start',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: SIZE.gap,
+          maxWidth: 760,
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Section title="常规">
-            <SwitchRow
-              title="开机自动启动"
-              checked={Boolean(verge?.enable_auto_launch)}
-              onChange={(value) => void patch({ enable_auto_launch: value })}
-              divider
-            />
-            <SwitchRow
-              title="启动时隐藏窗口"
-              description="开机启动后只在托盘显示图标"
-              checked={Boolean(verge?.enable_silent_start)}
-              onChange={(value) => void patch({ enable_silent_start: value })}
-              divider
-            />
-            <Row title="外观">
-              <div
-                role="group"
-                aria-label="外观"
-                style={{
-                  display: 'flex',
-                  padding: 3,
-                  borderRadius: 9,
-                  background: t.track,
-                }}
-              >
-                {THEMES.map((theme) => {
-                  const active = themeMode === theme.value
-                  return (
-                    <button
-                      key={theme.value}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => void patch({ theme_mode: theme.value })}
-                      style={{
-                        height: 28,
-                        padding: '0 12px',
-                        border: 0,
-                        borderRadius: 7,
-                        font: 'inherit',
-                        fontSize: 13,
-                        cursor: 'pointer',
-                        fontWeight: active ? 600 : 400,
-                        background: active ? t.surface : 'transparent',
-                        color: active ? t.link : t.text2,
-                        boxShadow: active
-                          ? '0 1px 2px rgba(15,35,60,0.12)'
-                          : 'none',
-                      }}
-                    >
-                      {theme.label}
-                    </button>
-                  )
-                })}
-              </div>
-            </Row>
-          </Section>
-
-          <Section title="账户">
-            <Row title={storage.session?.email ?? ''}>
-              <LinkButton
-                onClick={() => void openExternalUrl(panelUrls.dashboard())}
-              >
-                用户中心 ›
-              </LinkButton>
-            </Row>
-            <Button
-              variant="danger"
-              onClick={onLogout}
-              style={{ width: '100%' }}
+        <Section title="常规">
+          <SwitchRow
+            title="开机自动启动"
+            checked={Boolean(verge?.enable_auto_launch)}
+            onChange={(value) => void patch({ enable_auto_launch: value })}
+            divider
+          />
+          <SwitchRow
+            title="启动时隐藏窗口"
+            description="开机启动后只在托盘显示图标"
+            checked={Boolean(verge?.enable_silent_start)}
+            onChange={(value) => void patch({ enable_silent_start: value })}
+            divider
+          />
+          <Row title="外观">
+            <div
+              role="group"
+              aria-label="外观"
+              style={{
+                display: 'flex',
+                height: SIZE.control,
+                boxSizing: 'border-box',
+                padding: 3,
+                borderRadius: SIZE.controlRadius,
+                background: t.track,
+              }}
             >
+              {THEMES.map((theme) => {
+                const active = themeMode === theme.value
+                return (
+                  <button
+                    key={theme.value}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => void patch({ theme_mode: theme.value })}
+                    style={{
+                      height: SIZE.control - 6,
+                      minWidth: 72,
+                      padding: '0 12px',
+                      border: 0,
+                      borderRadius: SIZE.controlRadius - 3,
+                      font: 'inherit',
+                      fontSize: 13,
+                      cursor: 'pointer',
+                      fontWeight: active ? 600 : 400,
+                      background: active ? t.surface : 'transparent',
+                      color: active ? t.link : t.text2,
+                      boxShadow: active
+                        ? '0 1px 2px rgba(15,35,60,0.12)'
+                        : 'none',
+                    }}
+                  >
+                    {theme.label}
+                  </button>
+                )
+              })}
+            </div>
+          </Row>
+        </Section>
+
+        <Section title="TUN 服务">
+          <Row
+            title={
+              <>
+                <div>
+                  服务状态：
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      color: runState.serviceUsable ? t.ok : t.text2,
+                    }}
+                  >
+                    {runState.serviceUsable
+                      ? isServiceMode
+                        ? '运行中'
+                        : '已安装'
+                      : '未安装'}
+                  </span>
+                </div>
+                <div style={{ fontSize: 13, color: t.text2 }}>
+                  TUN 模式需要以系统服务运行核心
+                </div>
+              </>
+            }
+          >
+            {runState.serviceUsable ? (
+              <Button onClick={uninstall} style={{ width: 112 }}>
+                卸载服务
+              </Button>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={install}
+                style={{ width: 112 }}
+              >
+                安装服务
+              </Button>
+            )}
+          </Row>
+        </Section>
+
+        <Section title="账户">
+          <Row
+            title={
+              <>
+                <div>{storage.session?.email ?? ''}</div>
+                <LinkButton
+                  onClick={() => void openExternalUrl(panelUrls.dashboard())}
+                  style={{ fontSize: 13 }}
+                >
+                  打开用户中心 ›
+                </LinkButton>
+              </>
+            }
+          >
+            <Button variant="danger" onClick={onLogout} style={{ width: 112 }}>
               退出登录
             </Button>
-          </Section>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Section title="TUN 服务">
-            <Row
-              divider
-              title={
-                <>
-                  <div>服务状态</div>
-                  <div style={{ fontSize: 12, color: t.text2 }}>
-                    TUN 模式需要以系统服务运行核心
-                  </div>
-                </>
-              }
-            >
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: runState.serviceUsable ? t.ok : t.text2,
-                }}
-              >
-                {runState.serviceUsable
-                  ? isServiceMode
-                    ? '运行中'
-                    : '已安装'
-                  : '未安装'}
-              </span>
-            </Row>
-            <div style={{ display: 'flex', gap: 10, paddingTop: 12 }}>
-              {runState.serviceUsable ? (
-                <Button onClick={uninstall} style={{ flex: 1 }}>
-                  卸载服务
-                </Button>
-              ) : (
-                <Button variant="primary" onClick={install} style={{ flex: 1 }}>
-                  安装服务
-                </Button>
-              )}
-            </div>
-          </Section>
-        </div>
+          </Row>
+        </Section>
       </div>
     </>
   )

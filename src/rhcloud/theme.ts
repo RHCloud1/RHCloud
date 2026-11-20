@@ -85,3 +85,15 @@ export const formatLatency = (delay: number) =>
     error: '失败',
     measured: `${delay} ms`,
   })[classifyDelay(delay)]
+
+/** One spacing/size scale for every screen so cards and controls line up. */
+export const SIZE = {
+  gap: 16,
+  pad: 20,
+  radius: 14,
+  itemRadius: 12,
+  controlRadius: 10,
+  control: 36,
+  button: 40,
+  row: 52,
+} as const

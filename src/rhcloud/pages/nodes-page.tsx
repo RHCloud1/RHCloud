@@ -14,7 +14,7 @@ import {
 
 import { Button, PageHeader } from '../components/ui'
 import { useNodeGroups } from '../hooks'
-import { formatLatency, latencyColor, useRhTokens } from '../theme'
+import { formatLatency, latencyColor, SIZE, useRhTokens } from '../theme'
 
 const memberType = (member: InteractableProxyMember) =>
   member.kind === 'node' ? member.node.type : member.group.type
@@ -73,15 +73,16 @@ const NodesPage = () => {
       <PageHeader
         title="节点"
         actions={
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             <label
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
-                height: 38,
+                height: SIZE.control,
+                boxSizing: 'border-box',
                 padding: '0 12px',
-                borderRadius: 10,
+                borderRadius: SIZE.controlRadius,
                 border: `1px solid ${t.inputBorder}`,
                 background: t.surface,
                 color: t.text2,
@@ -122,7 +123,7 @@ const NodesPage = () => {
               loading={testing}
               disabled={!group}
               onClick={testAll}
-              style={{ height: 38 }}
+              style={{ height: SIZE.control }}
             >
               全部测速
             </Button>
@@ -156,9 +157,9 @@ const NodesPage = () => {
                   aria-selected={active}
                   onClick={() => setGroupName(g.name)}
                   style={{
-                    height: 34,
-                    padding: '0 14px',
-                    borderRadius: 17,
+                    height: 32,
+                    padding: '0 16px',
+                    borderRadius: 16,
                     font: 'inherit',
                     fontSize: 14,
                     fontWeight: 600,
@@ -183,7 +184,7 @@ const NodesPage = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
               gap: 12,
             }}
           >
@@ -213,9 +214,9 @@ const NodesPage = () => {
                   title={selectable ? '单击切换，双击单独测速' : '双击单独测速'}
                   style={{
                     boxSizing: 'border-box',
-                    minHeight: 76,
+                    height: 76,
                     padding: '14px 16px',
-                    borderRadius: 14,
+                    borderRadius: SIZE.itemRadius,
                     font: 'inherit',
                     color: t.text,
                     textAlign: 'left',
