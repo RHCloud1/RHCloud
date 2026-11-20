@@ -82,6 +82,10 @@ Name "${PRODUCTNAME}"
 BrandingText "${COPYRIGHT}"
 OutFile "${OUTFILE}"
 
+; RHCloud: keep the install/uninstall pages to a progress bar and a status line.
+ShowInstDetails nevershow
+ShowUninstDetails nevershow
+
 ; We don't actually use this value as default install path,
 ; it's just for nsis to append the product name folder in the directory selector
 ; https://nsis.sourceforge.io/Reference/InstallDir
@@ -396,9 +400,7 @@ Var AppStartMenuFolder
 
 ; 8. Finish page
 ;
-; Don't auto jump to finish page after installation page,
-; because the installation page has useful info that can be used debug any issues with the installer.
-!define MUI_FINISHPAGE_NOAUTOCLOSE
+; RHCloud jumps straight to the finish page; the file list is not shown.
 ; Use show readme button in the finish page as a button create a desktop shortcut
 !define MUI_FINISHPAGE_SHOWREADME
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "$(createDesktop)"
@@ -703,6 +705,7 @@ FunctionEnd
 !macroend
 
 Section EarlyChecks
+  SetDetailsPrint textonly
   ; Abort silent installer if downgrades is disabled
   !if "${ALLOWDOWNGRADES}" == "false"
   ${If} ${Silent}
@@ -899,6 +902,9 @@ Section WebView2
 SectionEnd
 
 Section Install
+  DetailPrint "正在安装 ${PRODUCTNAME}，请稍候…"
+  ; Keep this status line for the rest of the install instead of per-file "Extract:" lines.
+  SetDetailsPrint none
   SetOutPath $INSTDIR
 
   !ifmacrodef NSIS_HOOK_PREINSTALL
@@ -1101,6 +1107,9 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
+  SetDetailsPrint textonly
+  DetailPrint "正在卸载 ${PRODUCTNAME}…"
+  SetDetailsPrint none
 
   !ifmacrodef NSIS_HOOK_PREUNINSTALL
     !insertmacro NSIS_HOOK_PREUNINSTALL
