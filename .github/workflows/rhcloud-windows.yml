@@ -77,17 +77,17 @@ jobs:
           echo "path=dist-installer/$name" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      # Same app without the gitee domain list: only the built-in panel domains are used.
-      - name: Build nogitee installer
+      # "-s" build: same app without the gitee domain list, only the built-in panel domains.
+      - name: Build -s installer
         run: pnpm build --target ${{ env.TARGET }}
         env:
           VITE_RHCLOUD_FETCH_DOMAIN_CONFIG: 'false'
 
-      - name: Locate nogitee installer
+      - name: Locate -s installer
         shell: bash
         run: |
           file=$(ls target/${TARGET}/release/bundle/nsis/*.exe | head -n 1)
-          name="RHCloud-${{ steps.installer.outputs.version }}-x64-nogitee-setup.exe"
+          name="RHCloud-${{ steps.installer.outputs.version }}-x64-s-setup.exe"
           cp "$file" "dist-installer/$name"
           (cd dist-installer && sha256sum "$name" | tee "$name.sha256")
 

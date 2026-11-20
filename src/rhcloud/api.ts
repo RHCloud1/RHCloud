@@ -18,7 +18,7 @@ const BUILT_IN_BASE_URLS = [
 ]
 const DOMAIN_CONFIG_URL =
   'https://gitee.com/FHQ666/chatgpt-on-wechat/raw/master/hc.json'
-// The "nogitee" build sets this to false: it only ever uses the built-in domains.
+// The "-s" build sets this to false: it only ever uses the built-in domains.
 const FETCH_DOMAIN_CONFIG =
   import.meta.env.VITE_RHCLOUD_FETCH_DOMAIN_CONFIG !== 'false'
 
