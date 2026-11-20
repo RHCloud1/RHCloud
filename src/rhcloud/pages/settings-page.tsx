@@ -1,15 +1,12 @@
 import { useLockFn } from 'ahooks'
 import { type ReactNode } from 'react'
 
-import logo from '@/assets/image/rhcloud-logo.png'
 import { useServiceInstaller } from '@/hooks/use-service-installer'
 import { useServiceUninstaller } from '@/hooks/use-service-uninstaller'
 import { useSystemState } from '@/hooks/use-system-state'
 import { useVerge } from '@/hooks/use-verge'
-import { openLogsDir } from '@/services/cmds'
 import { showNotice } from '@/services/notice-service'
 import { openExternalUrl } from '@/utils/open-external-url'
-import { version } from '@root/package.json'
 
 import { panelUrls } from '../api'
 import {
@@ -22,8 +19,6 @@ import {
 import { useCloud } from '../hooks'
 import { storage } from '../storage'
 import { useRhTokens } from '../theme'
-
-const RELEASES_URL = 'https://github.com/RHCloud1/RHCloud/releases'
 
 const THEMES = [
   { value: 'light', label: '浅色' },
@@ -230,42 +225,6 @@ const SettingsPage = () => {
                   安装服务
                 </Button>
               )}
-            </div>
-          </Section>
-
-          <Section title="关于">
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 14,
-                minHeight: 64,
-              }}
-            >
-              <img
-                src={logo}
-                alt=""
-                style={{ width: 52, height: 32, objectFit: 'contain' }}
-              />
-              <div style={{ flexGrow: 1 }}>
-                <div style={{ fontSize: 15, fontWeight: 600 }}>
-                  RHCloud {version}
-                </div>
-                <div style={{ fontSize: 12, color: t.text2 }}>
-                  核心 mihomo · 基于 Clash Verge Rev（GPL-3.0）
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, paddingTop: 8 }}>
-              <Button
-                onClick={() => void openExternalUrl(RELEASES_URL)}
-                style={{ flex: 1 }}
-              >
-                检查更新
-              </Button>
-              <Button onClick={() => void openLogsDir()} style={{ flex: 1 }}>
-                打开日志目录
-              </Button>
             </div>
           </Section>
         </div>

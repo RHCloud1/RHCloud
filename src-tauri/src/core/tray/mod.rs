@@ -823,12 +823,9 @@ async fn create_tray_menu(
 
     let mut menu_items: Vec<&dyn IsMenuItem<Wry>> = vec![open_window, separator];
 
+    // RHCloud offers rule and global only; direct mode is left out of the menu.
     if show_outbound_modes_inline {
-        menu_items.extend_from_slice(&[
-            rule_mode as &dyn IsMenuItem<Wry>,
-            global_mode as &dyn IsMenuItem<Wry>,
-            direct_mode as &dyn IsMenuItem<Wry>,
-        ]);
+        menu_items.extend_from_slice(&[rule_mode as &dyn IsMenuItem<Wry>, global_mode as &dyn IsMenuItem<Wry>]);
     } else if let Some(ref outbound_modes) = outbound_modes {
         menu_items.push(outbound_modes);
     }

@@ -36,7 +36,6 @@ import {
 const MODES = [
   { value: 'rule', label: '规则' },
   { value: 'global', label: '全局' },
-  { value: 'direct', label: '直连' },
 ] as const
 
 const ModeSwitch = () => {

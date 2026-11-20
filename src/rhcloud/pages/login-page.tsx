@@ -1,9 +1,7 @@
 import { type CSSProperties, type FormEvent, useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 
-import logo3d from '@/assets/image/rhcloud-logo-3d.png'
 import logo from '@/assets/image/rhcloud-logo.png'
-import { useThemeMode } from '@/services/states'
 import { openExternalUrl } from '@/utils/open-external-url'
 
 import {
@@ -18,7 +16,6 @@ import { useRhTokens } from '../theme'
 
 const LoginPage = () => {
   const t = useRhTokens()
-  const isLight = useThemeMode() === 'light'
   const navigate = useNavigate()
   const saved = storage.session
   const [email, setEmail] = useState(saved?.email || storage.lastEmail)
@@ -101,15 +98,13 @@ const LoginPage = () => {
         }}
       >
         <img
-          src={isLight ? logo3d : logo}
+          src={logo}
           alt="RHCloud"
           style={{
             width: '78%',
             maxWidth: 300,
-            aspectRatio: isLight ? '1' : '867 / 537',
+            aspectRatio: '514 / 343',
             objectFit: 'contain',
-            // The 3D artwork has a white background; multiply drops it onto the light panel.
-            mixBlendMode: isLight ? 'multiply' : 'normal',
           }}
         />
         <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: 0.3 }}>

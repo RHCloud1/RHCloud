@@ -1,5 +1,5 @@
 #!/bin/bash
-/usr/bin/clash-verge-service-uninstall
+/usr/bin/rhcloud-service-uninstall
 
 . /etc/os-release
 

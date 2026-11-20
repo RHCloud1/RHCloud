@@ -1,5 +1,5 @@
 const SERVICE_URL_PREFIX =
-  'https://github.com/clash-verge-rev/clash-verge-service-ipc/releases/download'
+  'https://github.com/RHCloud1/RHCloud-service/releases/download'
 
 export function resolveServiceRelease(cargoManifest, host, platform) {
   const dependency = cargoManifest
@@ -14,7 +14,7 @@ export function resolveServiceRelease(cargoManifest, host, platform) {
 
   const version = `v${packageVersion}`
   const archiveExt = platform === 'win32' ? 'zip' : 'tar.gz'
-  const archiveFile = `clash-verge-service-ipc-${version}-${host}.${archiveExt}`
+  const archiveFile = `rhcloud-service-${version}-${host}.${archiveExt}`
   return {
     version,
     archiveFile,

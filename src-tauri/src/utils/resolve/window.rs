@@ -19,9 +19,11 @@ const DEFAULT_HEIGHT: f64 = 700.0;
 const MINIMAL_WIDTH: f64 = 880.0;
 const MINIMAL_HEIGHT: f64 = 600.0;
 
-#[cfg(target_os = "linux")]
+// RHCloud draws its own title bar on Windows; with the native shadow on, Windows 11 rounds
+// the corners of the frameless window.
+#[cfg(any(target_os = "linux", target_os = "windows"))]
 const DEFAULT_DECORATIONS: bool = false;
-#[cfg(not(target_os = "linux"))]
+#[cfg(target_os = "macos")]
 const DEFAULT_DECORATIONS: bool = true;
 
 const fn restored_window_size_is_too_small(width: u32, height: u32) -> bool {
@@ -84,6 +86,7 @@ pub async fn build_new_window() -> Result<WebviewWindow, String> {
     .title("RHCloud")
     .center()
     .decorations(DEFAULT_DECORATIONS)
+    .shadow(true)
     .fullscreen(false)
     .inner_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
     .min_inner_size(MINIMAL_WIDTH, MINIMAL_HEIGHT)

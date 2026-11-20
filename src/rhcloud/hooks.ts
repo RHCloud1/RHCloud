@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from 'react'
 import { useNavigate } from 'react-router'
 
+import { useProxySelection } from '@/hooks/use-proxy-selection'
 import { useSystemProxyState } from '@/hooks/use-system-proxy-state'
 import { useSystemState } from '@/hooks/use-system-state'
 import { useVerge } from '@/hooks/use-verge'
-import { useProxiesData } from '@/providers/app-data-context'
+import {
+  useAppRefreshers,
+  useClashConfigData,
+  useProxiesData,
+} from '@/providers/app-data-context'
 import { showNotice } from '@/services/notice-service'
 import { requestService } from '@/services/service-request'
 import { getRecord, type ProxyGroupView } from '@/types/proxy-view'
@@ -182,6 +187,28 @@ export const useNodeGroups = () => {
     }
     return { proxyView, groups, main, current }
   }, [proxyView])
+}
+
+/**
+ * Global mode routes through mihomo's GLOBAL group, which the UI never shows, so keep it
+ * pointed at the main group; otherwise a node picked on the nodes page would be ignored.
+ */
+export const useGlobalFollowsMain = () => {
+  const { clashConfig } = useClashConfigData()
+  const { proxyView, main } = useNodeGroups()
+  const { refreshProxy } = useAppRefreshers()
+  const onSuccess = useCallback(() => void refreshProxy(), [refreshProxy])
+  const { changeProxy } = useProxySelection({ onSuccess })
+  const mode = clashConfig?.mode?.toLowerCase()
+  const globalName = proxyView?.global?.name
+  const globalNow = proxyView?.global?.now ?? undefined
+  const mainName = main?.name
+
+  useEffect(() => {
+    if (mode !== 'global' || !globalName || !mainName || globalNow === mainName)
+      return
+    changeProxy(globalName, mainName, globalNow)
+  }, [mode, globalName, globalNow, mainName, changeProxy])
 }
 
 /** System proxy and TUN switches with the same guards Verge uses. */
