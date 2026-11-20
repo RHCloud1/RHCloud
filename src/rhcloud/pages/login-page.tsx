@@ -4,11 +4,7 @@ import { Navigate, useNavigate } from 'react-router'
 import logo from '@/assets/image/rhcloud-logo.png'
 import { openExternalUrl } from '@/utils/open-external-url'
 
-import {
-  panelUrls,
-  SubscriptionRequiredError,
-  updateDomainConfigIfStale,
-} from '../api'
+import { checkLine, panelUrls, SubscriptionRequiredError } from '../api'
 import { Button, LinkButton } from '../components/ui'
 import { hasFreshSession, storage } from '../storage'
 import { signIn, syncSubscription } from '../sync'
@@ -26,7 +22,7 @@ const LoginPage = () => {
   const [lineOk, setLineOk] = useState<boolean | null>(null)
 
   useEffect(() => {
-    updateDomainConfigIfStale()
+    checkLine()
       .then(() => setLineOk(true))
       .catch(() => setLineOk(false))
   }, [])

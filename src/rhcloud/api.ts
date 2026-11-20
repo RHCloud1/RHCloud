@@ -3,8 +3,12 @@ import { fetch } from '@tauri-apps/plugin-http'
 import { storage } from './storage'
 
 // Ported from RHCloud-box (Android) RHCloudApi.kt so both clients pick panel domains the same way.
-const DEFAULT_BASE_URL = 'https://syn.rhcloud.cc'
+const DEFAULT_BASE_URL = 'https://cad.rhcloud.cc'
 const BUILT_IN_BASE_URLS = [
+  'https://cad.rhcloud.cc',
+  'https://abc.rhcloud.cc',
+  'https://abs.rhcloud.cc',
+  'https://rhc.rhcloud.cc',
   'https://syn.rhcloud.cc',
   'https://sys.rhcloud.cc',
   'https://syn.ffhy.uk',
@@ -18,13 +22,13 @@ const DOMAIN_CONFIG_URL =
 const LOGIN_PATH = '/api/v1/passport/auth/login'
 const SUBSCRIBE_INFO_PATH = '/api/v1/user/getSubscribe'
 const CLIENT_SUBSCRIBE_PATH = '/api/v1/client/subscribe'
+const PROBE_PATH = '/api/v1/guest/comm/config'
 
 const REQUEST_TIMEOUT_MS = 8000
 const SLOW_ENDPOINT_MS = 5000
 const PROBE_TIMEOUT_MS = 3000
 const DOMAIN_SELECT_TIMEOUT_MS = 6000
 const DOMAIN_POOL_SIZE = 3
-const DOMAIN_REFRESH_MS = 7 * 24 * 60 * 60 * 1000
 
 export class ApiError extends Error {}
 export class AuthExpiredError extends ApiError {}
@@ -173,16 +177,23 @@ const request = async (url: string, options: RequestOptions = {}) => {
 }
 
 /** Tries each panel domain; a domain answering within 5s is remembered for next time. */
-const execute = async (path: string, options: RequestOptions = {}) => {
+const executeOn = async (
+  baseUrls: string[],
+  path: string,
+  options: RequestOptions,
+) => {
   let lastError: unknown
   let slow: {
     baseUrl: string
     result: { status: number; text: string }
   } | null = null
-  for (const baseUrl of candidateBaseUrls()) {
+  for (const baseUrl of baseUrls) {
     const startedAt = Date.now()
     try {
       const result = await request(baseUrl + path, options)
+      // A domain that is not (or no longer) bound to the panel answers with an HTML page.
+      if (result.text.trimStart().startsWith('<'))
+        throw new ApiError(`${baseUrl} 不是 RHCloud 面板`)
       if (Date.now() - startedAt <= SLOW_ENDPOINT_MS) {
         rememberBaseUrl(baseUrl)
         return result
@@ -201,6 +212,20 @@ const execute = async (path: string, options: RequestOptions = {}) => {
       ? `无法连接 RHCloud：${lastError.message}`
       : '无法连接 RHCloud，请检查网络',
   )
+}
+
+const execute = async (path: string, options: RequestOptions = {}) => {
+  const tried = candidateBaseUrls()
+  try {
+    return await executeOn(tried, path, options)
+  } catch (error) {
+    // The gitee domain list is only fetched once every local domain has failed.
+    const fresh = (await updateDomainConfig().catch(() => [])).filter(
+      (url) => !tried.includes(url),
+    )
+    if (fresh.length === 0) throw error
+    return executeOn(fresh, path, options)
+  }
 }
 
 const parseResponse = ({ status, text }: { status: number; text: string }) => {
@@ -292,7 +317,7 @@ export const clashSubscribeUrl = (subscribeUrl: string) => {
 }
 
 const probe = async (baseUrl: string) => {
-  const response = await fetch(`${baseUrl}/`, {
+  const response = await fetch(`${baseUrl}${PROBE_PATH}`, {
     method: 'GET',
     signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
   })
@@ -335,15 +360,20 @@ export const updateDomainConfig = async () => {
   return effective
 }
 
-export const updateDomainConfigIfStale = async () => {
-  const last = storage.domainConfigUpdatedAt
-  if (
-    last > 0 &&
-    Date.now() - last < DOMAIN_REFRESH_MS &&
-    storage.remoteDomains.length
-  )
-    return
-  await updateDomainConfig()
+/** Finds a working panel domain for the login screen; the gitee list is only fetched if none answers. */
+export const checkLine = async () => {
+  for (const baseUrl of candidateBaseUrls()) {
+    try {
+      await probe(baseUrl)
+      rememberBaseUrl(baseUrl)
+      return baseUrl
+    } catch {
+      // try the next domain
+    }
+  }
+  const [first] = await updateDomainConfig()
+  await probe(first)
+  return first
 }
 
 export const panelUrls = {
