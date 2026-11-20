@@ -1067,6 +1067,8 @@ Section Install
     !insertmacro NSIS_HOOK_POSTINSTALL
   !endif
 
+  System::Call 'shell32::SHChangeNotify(i 0x08000000, i 0, p 0, p 0)'
+
   ; Auto close this page for passive mode
   ${If} $PassiveMode = 1
     SetAutoClose true
@@ -1409,4 +1411,6 @@ Function CreateOrUpdateDesktopShortcut
 
   CreateShortcut "$DESKTOP\${PRODUCTNAME}.lnk" "$INSTDIR\${MAINBINARYNAME}.exe"
   !insertmacro SetLnkAppUserModelId "$DESKTOP\${PRODUCTNAME}.lnk"
+  ; SHCNE_ASSOCCHANGED: Explorer otherwise keeps the cached icon of the previous version
+  System::Call 'shell32::SHChangeNotify(i 0x08000000, i 0, p 0, p 0)'
 FunctionEnd
