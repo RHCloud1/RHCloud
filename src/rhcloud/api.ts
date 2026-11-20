@@ -18,6 +18,9 @@ const BUILT_IN_BASE_URLS = [
 ]
 const DOMAIN_CONFIG_URL =
   'https://gitee.com/FHQ666/chatgpt-on-wechat/raw/master/hc.json'
+// The "nogitee" build sets this to false: it only ever uses the built-in domains.
+const FETCH_DOMAIN_CONFIG =
+  import.meta.env.VITE_RHCLOUD_FETCH_DOMAIN_CONFIG !== 'false'
 
 const LOGIN_PATH = '/api/v1/passport/auth/login'
 const SUBSCRIBE_INFO_PATH = '/api/v1/user/getSubscribe'
@@ -102,11 +105,13 @@ const orderBaseUrls = (list: string[]) =>
 
 const configuredBaseUrls = () =>
   orderBaseUrls(
-    unique([
-      normalizeBaseUrl(storage.remoteDefaultBaseUrl),
-      ...storage.remoteDomains.map(normalizeBaseUrl),
-      ...BUILT_IN_BASE_URLS,
-    ]),
+    FETCH_DOMAIN_CONFIG
+      ? unique([
+          normalizeBaseUrl(storage.remoteDefaultBaseUrl),
+          ...storage.remoteDomains.map(normalizeBaseUrl),
+          ...BUILT_IN_BASE_URLS,
+        ])
+      : BUILT_IN_BASE_URLS,
   )
 
 export const activeBaseUrl = () => {
@@ -327,6 +332,7 @@ const probe = async (baseUrl: string) => {
 
 /** Downloads the domain list from gitee and keeps the 3 fastest reachable domains. */
 export const updateDomainConfig = async () => {
+  if (!FETCH_DOMAIN_CONFIG) throw new ApiError('无法连接 RHCloud，请检查网络')
   const response = await fetch(`${DOMAIN_CONFIG_URL}?_t=${Date.now()}`, {
     method: 'GET',
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
