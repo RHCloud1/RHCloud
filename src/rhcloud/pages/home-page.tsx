@@ -276,9 +276,10 @@ const AccountCard = () => {
     : null
   // Healthy subscriptions keep the renew button low-key; it only stands out when action is needed.
   const needsRenewal =
-    status !== 'active' ||
-    percent >= 90 ||
-    (expiresAt !== null && expiresAt.diff(dayjs(), 'day') < 7)
+    info !== null &&
+    (status !== 'active' ||
+      percent >= 90 ||
+      (expiresAt !== null && expiresAt.diff(dayjs(), 'day') < 7))
 
   const onSync = async () => {
     if (await sync()) showNotice.success('订阅已更新')
