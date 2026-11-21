@@ -274,6 +274,11 @@ const AccountCard = () => {
         info.expiredAt > 100000000000 ? info.expiredAt : info.expiredAt * 1000,
       )
     : null
+  // Healthy subscriptions keep the renew button low-key; it only stands out when action is needed.
+  const needsRenewal =
+    status !== 'active' ||
+    percent >= 90 ||
+    (expiresAt !== null && expiresAt.diff(dayjs(), 'day') < 7)
 
   const onSync = async () => {
     if (await sync()) showNotice.success('订阅已更新')
@@ -323,7 +328,7 @@ const AccountCard = () => {
         }}
       >
         <span style={{ fontSize: 18, fontWeight: 700 }}>
-          {info?.planName || '暂无套餐'}
+          {info ? info.planName || '还没有套餐' : '正在获取套餐…'}
         </span>
         <span style={{ fontSize: 13, color: t.text2 }}>
           {expiresAt
@@ -384,7 +389,7 @@ const AccountCard = () => {
           同步订阅
         </Button>
         <Button
-          variant="primary"
+          variant={needsRenewal ? 'primary' : 'secondary'}
           onClick={() => void openExternalUrl(panelUrls.plan())}
           style={{ flex: 1 }}
         >
