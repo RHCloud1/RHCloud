@@ -393,7 +393,7 @@ const AccountCard = () => {
       </div>
       <div style={{ fontSize: 12, color: t.text2 }}>
         {lastSyncAt
-          ? `上次同步：${dayjs(lastSyncAt).fromNow()} · 每 60 分钟自动更新`
+          ? `上次同步：${dayjs(lastSyncAt).fromNow()} · 每天自动更新`
           : '还没有同步过订阅'}
       </div>
     </Card>
