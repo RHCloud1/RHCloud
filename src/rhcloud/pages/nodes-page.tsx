@@ -13,7 +13,7 @@ import {
 } from '@/types/proxy-view'
 
 import { Button, PageHeader } from '../components/ui'
-import { useNodeGroups } from '../hooks'
+import { PROXY_MODES, useClashMode, useNodeGroups } from '../hooks'
 import { formatLatency, latencyColor, SIZE, useRhTokens } from '../theme'
 
 const memberType = (member: InteractableProxyMember) =>
@@ -22,16 +22,17 @@ const memberType = (member: InteractableProxyMember) =>
 const NodesPage = () => {
   const t = useRhTokens()
   const { verge } = useVerge()
-  const { proxyView, groups, main } = useNodeGroups()
+  // Only the main group's own nodes are listed; panel sub-groups such as
+  // 自动选择 / 故障转移 are hidden and useMainSelectsNode moves off them.
+  const { proxyView, main: group } = useNodeGroups()
+  const { mode, setMode } = useClashMode()
   const { refreshProxy } = useAppRefreshers()
   const { changeProxy } = useProxySelection({
     onSuccess: () => void refreshProxy(),
   })
-  const [groupName, setGroupName] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [testing, setTesting] = useState(false)
 
-  const group = groups.find((g) => g.name === groupName) ?? main
   const delays = useGroupDelays(group?.name ?? null)
   const selectable = group?.type === 'Selector'
 
@@ -44,6 +45,7 @@ const NodesPage = () => {
     return group.members
       .map((ref) => resolveMember(proxyView, ref))
       .filter(isInteractableMember)
+      .filter((member) => member.kind === 'node')
   }, [proxyView, group])
 
   const visible = useMemo(() => {
@@ -131,15 +133,15 @@ const NodesPage = () => {
         }
       />
 
-      {groups.length === 0 ? (
+      {!group ? (
         <div style={{ padding: '60px 0', textAlign: 'center', color: t.text2 }}>
           还没有节点。请回到首页点“同步订阅”。
         </div>
       ) : (
         <>
           <div
-            role="tablist"
-            aria-label="节点分组"
+            role="group"
+            aria-label="代理模式"
             style={{
               display: 'flex',
               gap: 8,
@@ -147,15 +149,14 @@ const NodesPage = () => {
               marginBottom: 14,
             }}
           >
-            {groups.map((g) => {
-              const active = g.name === group?.name
+            {PROXY_MODES.map((item) => {
+              const active = mode === item.value
               return (
                 <button
-                  key={g.name}
+                  key={item.value}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setGroupName(g.name)}
+                  aria-pressed={active}
+                  onClick={() => setMode(item.value)}
                   style={{
                     height: 32,
                     padding: '0 16px',
@@ -169,16 +170,15 @@ const NodesPage = () => {
                     color: active ? t.onPrimary : t.neutralChipText,
                   }}
                 >
-                  {g.name}
+                  {item.label}
                 </button>
               )
             })}
           </div>
 
           <div style={{ fontSize: 13, color: t.text2, marginBottom: 12 }}>
-            当前分组 <b style={{ color: t.text }}>{group?.name}</b> ·{' '}
             {members.length} 个节点
-            {selectable ? ' · 点击节点即可切换' : ' · 此分组自动选择最快的节点'}
+            {selectable ? ' · 点击节点即可切换，双击单独测速' : ''}
           </div>
 
           <div

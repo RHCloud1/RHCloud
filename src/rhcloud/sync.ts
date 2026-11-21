@@ -24,7 +24,7 @@ export const PROFILE_NAME = 'RHCloud'
 const PROFILE_OPTION: IProfileOption = {
   with_proxy: false,
   self_proxy: false,
-  update_interval: 60,
+  update_interval: 24 * 60,
   allow_auto_update: true,
   timeout_seconds: 30,
 }
@@ -85,8 +85,16 @@ const applyProfile = async (url: string) => {
     if (!item?.uid) throw new Error('订阅已下载，但没有找到对应的配置')
     await patchProfile(item.uid, { name: PROFILE_NAME, option: PROFILE_OPTION })
   } else {
-    if (item.url !== url || item.name !== PROFILE_NAME) {
-      await patchProfile(item.uid, { url, name: PROFILE_NAME })
+    if (
+      item.url !== url ||
+      item.name !== PROFILE_NAME ||
+      item.option?.update_interval !== PROFILE_OPTION.update_interval
+    ) {
+      await patchProfile(item.uid, {
+        url,
+        name: PROFILE_NAME,
+        option: PROFILE_OPTION,
+      })
     }
     await updateProfile(item.uid, PROFILE_OPTION)
   }

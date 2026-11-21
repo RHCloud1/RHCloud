@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 
 import { uninstallService } from '@/services/cmds'
 import { mutate } from '@/services/mutate'
-import { showNotice } from '@/services/notice-service'
 
 import { useSystemState } from './use-system-state'
 
@@ -11,17 +10,12 @@ export const useServiceUninstaller = () => {
 
   const uninstallServiceAndStartSidecar = useCallback(async () => {
     let uninstallError: unknown
-    showNotice.info('settings.statuses.clashService.uninstalling')
+    // RHCloud: no progress/success toasts; failures are rethrown to the caller.
     try {
-      const result = await mutate(() => uninstallService(), {
+      await mutate(() => uninstallService(), {
         id: 'uninstall-service',
         errorNotice: false,
       })
-      if (result.ok) {
-        showNotice.success(
-          'settings.feedback.notifications.clashService.uninstallSuccess',
-        )
-      }
     } catch (error) {
       uninstallError = error
     }

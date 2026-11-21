@@ -7,7 +7,11 @@ import { useVisibility } from '@/hooks/use-visibility'
 import parseTraffic from '@/utils/parse-traffic'
 import { version } from '@root/package.json'
 
-import { useAutoSync, useGlobalFollowsMain } from '../hooks'
+import {
+  useAutoSync,
+  useGlobalFollowsMain,
+  useMainSelectsNode,
+} from '../hooks'
 import { hasFreshSession } from '../storage'
 import { useRhTokens } from '../theme'
 
@@ -83,6 +87,7 @@ export const AppLayout = () => {
   } = useTrafficData({ enabled: visible })
   useAutoSync()
   useGlobalFollowsMain()
+  useMainSelectsNode()
 
   if (!hasFreshSession()) return <Navigate to="/login" replace />
 

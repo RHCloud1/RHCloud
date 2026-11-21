@@ -1,3 +1,4 @@
+import { useLockFn } from 'ahooks'
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -10,6 +11,7 @@ import {
   useClashConfigData,
   useProxiesData,
 } from '@/providers/app-data-context'
+import { patchClashMode } from '@/services/cmds'
 import { showNotice } from '@/services/notice-service'
 import { requestService } from '@/services/service-request'
 import { getRecord, type ProxyGroupView } from '@/types/proxy-view'
@@ -23,7 +25,7 @@ import {
 import { hasFreshSession, storage } from './storage'
 import { refreshSubscriptionInfo, signOut, syncSubscription } from './sync'
 
-const AUTO_SYNC_INTERVAL_MS = 60 * 60 * 1000
+const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000
 
 // Tiny store so every screen sees the same subscription/sync state.
 interface CloudState {
@@ -187,6 +189,46 @@ export const useNodeGroups = () => {
     }
     return { proxyView, groups, main, current }
   }, [proxyView])
+}
+
+/**
+ * The nodes page only lists real nodes, so a main group still pointing at a sub-group
+ * from the panel template (自动选择 / 故障转移) is moved to the first node.
+ */
+export const useMainSelectsNode = () => {
+  const { main } = useNodeGroups()
+  const { refreshProxy } = useAppRefreshers()
+  const onSuccess = useCallback(() => void refreshProxy(), [refreshProxy])
+  const { changeProxy } = useProxySelection({ onSuccess })
+  const mainName = main?.type === 'Selector' ? main.name : undefined
+  const now = main?.now ?? undefined
+  const nodes = (main?.members ?? []).filter((ref) => ref.kind === 'node')
+  const firstNode = nodes[0]?.name
+  const onNode = nodes.some((ref) => ref.name === now)
+
+  useEffect(() => {
+    if (!mainName || !firstNode || onNode) return
+    changeProxy(mainName, firstNode, now)
+  }, [mainName, firstNode, onNode, now, changeProxy])
+}
+
+export const PROXY_MODES = [
+  { value: 'rule', label: '规则' },
+  { value: 'global', label: '全局' },
+] as const
+
+export const useClashMode = () => {
+  const { clashConfig } = useClashConfigData()
+  const { refreshClashConfig } = useAppRefreshers()
+  const setMode = useLockFn(async (mode: string) => {
+    try {
+      await patchClashMode(mode)
+      await refreshClashConfig()
+    } catch (error) {
+      showNotice.error(error)
+    }
+  })
+  return { mode: clashConfig?.mode?.toLowerCase(), setMode }
 }
 
 /**

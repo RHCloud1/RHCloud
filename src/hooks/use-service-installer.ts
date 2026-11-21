@@ -4,18 +4,10 @@ import { installService, restartCore } from '@/services/cmds'
 import { mutate } from '@/services/mutate'
 import { showNotice } from '@/services/notice-service'
 
-const executeWithErrorHandling = async <T>(
-  operation: () => Promise<T>,
-  loadingKey: string,
-  successKey?: string,
-) => {
+// RHCloud: only failures are shown; progress and success toasts are dropped.
+const executeWithErrorHandling = async <T>(operation: () => Promise<T>) => {
   try {
-    showNotice.info(loadingKey)
-    const result = await operation()
-    if (successKey) {
-      showNotice.success(successKey)
-    }
-    return result
+    return await operation()
   } catch (err) {
     showNotice.error(err)
     throw err
@@ -24,13 +16,11 @@ const executeWithErrorHandling = async <T>(
 
 export const useServiceInstaller = () => {
   const installServiceAndRestartCore = useCallback(async () => {
-    const installResult = await executeWithErrorHandling(
-      () =>
-        mutate(() => installService(), {
-          id: 'install-service',
-          errorNotice: false,
-        }),
-      'settings.statuses.clashService.installing',
+    const installResult = await executeWithErrorHandling(() =>
+      mutate(() => installService(), {
+        id: 'install-service',
+        errorNotice: false,
+      }),
     )
     if (!installResult.ok) return
     if (installResult.value.status === 'sidecar') {
@@ -41,18 +31,11 @@ export const useServiceInstaller = () => {
       )
       return
     }
-    showNotice.success(
-      'settings.feedback.notifications.clashService.installSuccess',
-    )
-
-    await executeWithErrorHandling(
-      () =>
-        mutate(() => restartCore(), {
-          id: 'restart-core',
-          errorNotice: false,
-        }),
-      'settings.statuses.clash.restarting',
-      'settings.feedback.notifications.clash.restartSuccess',
+    await executeWithErrorHandling(() =>
+      mutate(() => restartCore(), {
+        id: 'restart-core',
+        errorNotice: false,
+      }),
     )
   }, [])
   return { installServiceAndRestartCore }

@@ -152,15 +152,7 @@ export const SysproxyPrivilegeDialog = () => {
             errorNotice: false,
           })
         }
-        if (!usingAdminFallback) {
-          showNotice.success(
-            remedy === 'reinstallAndRestart'
-              ? 'layout.components.serviceMigration.success'
-              : restoring === undefined
-                ? 'settings.sections.proxyControl.messages.installedCheckProxy'
-                : 'settings.sections.proxyControl.messages.installedProxyRestored',
-          )
-        }
+        // RHCloud: no success toast; the dialog closing and the switch turning on say enough.
         close()
       } else {
         showNotice.error(

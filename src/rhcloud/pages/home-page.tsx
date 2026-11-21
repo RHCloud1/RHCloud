@@ -6,11 +6,6 @@ import { useNavigate } from 'react-router'
 import { useTrafficData } from '@/hooks/use-traffic-data'
 import { useTrafficGraphDataEnhanced } from '@/hooks/use-traffic-monitor'
 import { useVisibility } from '@/hooks/use-visibility'
-import {
-  useAppRefreshers,
-  useClashConfigData,
-} from '@/providers/app-data-context'
-import { patchClashMode } from '@/services/cmds'
 import { showNotice } from '@/services/notice-service'
 import { openExternalUrl } from '@/utils/open-external-url'
 import parseTraffic from '@/utils/parse-traffic'
@@ -23,7 +18,13 @@ import {
   PageHeader,
   SwitchRow,
 } from '../components/ui'
-import { useCloud, useConnection, useNodeGroups } from '../hooks'
+import {
+  PROXY_MODES,
+  useClashMode,
+  useCloud,
+  useConnection,
+  useNodeGroups,
+} from '../hooks'
 import { storage } from '../storage'
 import {
   BRAND_BLUE,
@@ -34,25 +35,9 @@ import {
   useRhTokens,
 } from '../theme'
 
-const MODES = [
-  { value: 'rule', label: '规则' },
-  { value: 'global', label: '全局' },
-] as const
-
 const ModeSwitch = () => {
   const t = useRhTokens()
-  const { clashConfig } = useClashConfigData()
-  const { refreshClashConfig } = useAppRefreshers()
-  const current = clashConfig?.mode?.toLowerCase()
-
-  const change = useLockFn(async (mode: string) => {
-    try {
-      await patchClashMode(mode)
-      await refreshClashConfig()
-    } catch (error) {
-      showNotice.error(error)
-    }
-  })
+  const { mode: current, setMode: change } = useClashMode()
 
   return (
     <div
@@ -67,7 +52,7 @@ const ModeSwitch = () => {
         background: t.track,
       }}
     >
-      {MODES.map((mode) => {
+      {PROXY_MODES.map((mode) => {
         const active = current === mode.value
         return (
           <button
