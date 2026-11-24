@@ -1,141 +1,115 @@
 <h1 align="center">
-  <img src="./src-tauri/icons/icon.png" alt="Clash" width="128" />
+  <img src="./src-tauri/icons/icon.png" alt="RHCloud" width="112" />
   <br>
-  Continuation of <a href="https://github.com/zzzgydi/clash-verge">Clash Verge</a>
-  <br>
+  RHCloud
 </h1>
 
-<h3 align="center">
-A Clash Meta GUI based on <a href="https://github.com/tauri-apps/tauri">Tauri</a>.
-</h3>
+<p align="center">RHCloud 的 Windows 客户端：登录账号即可使用，节点自动同步。</p>
 
-<p align="center">
-  Languages:
-  <a href="./docs/README_en.md">English</a> ·
-  <a href="./docs/README_es.md">Español</a> ·
-  <a href="./docs/README_fa.md">فارسی</a> ·
-  <a href="./docs/README_ja.md">日本語</a> ·
-  <a href="./docs/README_ko.md">한국어</a> ·
-  <a href="./docs/README_pt.md">Português</a> ·
-  <a href="./docs/README_ru.md">Русский</a> ·
-  <a href="./README.md">简体中文</a>
-</p>
+## 下载安装
 
-## Preview
+到 [Releases](https://github.com/RHCloud1/RHCloud/releases/latest) 下载最新的 `RHCloud-<版本>-x64-setup.exe`，双击安装。
 
-| Dark                             | Light                             |
-| -------------------------------- | --------------------------------- |
-| ![预览](./docs/preview_dark.png) | ![预览](./docs/preview_light.png) |
+- 支持 Windows 10 / 11（64 位）。
+- 安装包没有数字签名，Windows 可能提示"已保护你的电脑"，点 **更多信息 → 仍要运行**。
+- 新版本可以直接覆盖安装，设置和登录状态会保留。装过 1.0.0 测试版的请先卸载再装。
+- 每个安装包旁边有同名 `.sha256` 文件，可以用来核对下载是否完整。
 
-## Install
+## 使用
 
-请到发布页面下载对应的安装包：[Release page](https://github.com/clash-verge-rev/clash-verge-rev/releases)<br>
-Go to the [Release page](https://github.com/clash-verge-rev/clash-verge-rev/releases) to download the corresponding installation package<br>
-Supports Windows (x64/x86), Linux (x64/arm64) and macOS 11+ (intel/apple).
-支持 Windows (x64/x86)、Linux (x64/arm64) 和 macOS 11+ (intel/apple)。
+1. **登录**：打开后输入 RHCloud 账号和密码。登录后订阅和节点会自动导入，不需要手动复制订阅链接。
+2. **连接**：在首页打开"系统代理"即可上网。浏览器和大多数软件会自动走代理。
+3. **选节点**：在"节点"页选择节点，可以搜索，也可以一键测延迟。
+4. **代理模式**（首页右上角）：
+   - **规则**（默认）：国内网站直连，其他走代理。
+   - **全局**：所有流量都走代理。
+5. **TUN 模式**：有些软件不认系统代理（游戏、部分命令行工具），可以在首页打开 TUN 模式接管全部流量。第一次开启要先安装 TUN 服务，会请求管理员权限。
 
-#### 我应当怎样选择发行版
+首页还会显示当前套餐、到期时间、流量用量，以及实时上传和下载速度。订阅每天自动更新一次。
 
-| 版本        | 特征                                     | 链接                                                                                   |
-| :---------- | :--------------------------------------- | :------------------------------------------------------------------------------------- |
-| Stable      | 正式版，高可靠性，适合日常使用。         | [Release](https://github.com/clash-verge-rev/clash-verge-rev/releases)                 |
-| Alpha(废弃) | 测试发布流程。                           | [Alpha](https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/alpha)         |
-| AutoBuild   | 滚动更新版，适合测试反馈，可能存在缺陷。 | [AutoBuild](https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/autobuild) |
+### 设置
 
-#### 安装说明和常见问题，请到 [文档页](https://clash-verge-rev.github.io/) 查看
+| 项目 | 说明 |
+|---|---|
+| 开机自动启动 | 登录 Windows 后自动运行 |
+| 启动时隐藏窗口 | 启动后只在托盘显示 |
+| 外观 | 浅色 / 深色 / 跟随系统 |
+| TUN 服务 | 安装或卸载 TUN 模式需要的系统服务 |
+| 账户 | 查看当前账户、退出登录 |
 
-### TG 频道: [@clash_verge_rev](https://t.me/clash_verge_re)
+关闭窗口不会退出程序，程序会继续在托盘里运行。右键托盘图标可以切换代理模式、开关系统代理和 TUN，或者退出。托盘图标的颜色表示当前状态：
 
----
+- 灰色：未连接
+- 蓝色：系统代理已开
+- 紫色：TUN 模式已开
 
-## Promotion
+### 本地端口
 
-### ✈️ [AI云边 -- 全新架构机场 ClaudeBorder](https://cruise.54678999.xyz/#/register?code=58q5UJZc)
+| 端口 | 协议 |
+|---|---|
+| 7788 | HTTP + SOCKS5 混合 |
+| 7789 | SOCKS5 |
+| 7790 | HTTP |
 
-🔥热销中使用本链接注册即送 **3 天免费试用**，每日 **1GB 流量**：👉 [点此注册](https://cruise.54678999.xyz/#/register?code=58q5UJZc)
+如果其他软件要手动设置代理，填 `127.0.0.1:7788` 即可。
 
-#### AI云边 -- 全新架构机场。
+## 常见问题
 
-- 💻 多次**技术迭代后**全新亮相。
-- 🗺 全**高速稳定**正价节点。
-- 🌏 **海外团队**，不跑路
-- 🚀 线路**冗余**设计，**自动化运维**对抗各类封锁
-- 👨‍🦲 团队架构师为**大厂**网络架构师
-- 💰 极致**稳定**，亲民价**价格**
-- 🌐 全面支持**流媒体及各AI访问**
-- 🙋 7*12小时真人客服。解决您的各类问题。
+**登录失败 / 提示网络错误**
+客户端内置了多个备用服务器地址，会自动切换。如果全部失败，请检查本机网络，或者稍后再试。
 
-🌐 官网：👉 [https://www.claudeborder.com](https://cruise.54678999.xyz/#/register?code=58q5UJZc)
+**开了系统代理，某个软件还是连不上**
+这个软件不读系统代理设置，改用 TUN 模式。
 
-### 🤖 [GPTKefu —— 与 Crisp 深度整合的 AI 智能客服平台](https://gptkefu.com)
+**TUN 服务安装失败**
+请确认在弹出的权限窗口里点了"是"。另外，杀毒软件可能拦截服务安装，需要临时放行。
 
-- 🧠 深度理解完整对话上下文 + 图片识别，自动给出专业、精准的回复，告别机械式客服。
-- ♾️ **不限回答数量**，无额度焦虑，区别于其他按条计费的 AI 客服产品。
-- 💬 售前咨询、售后服务、复杂问题解答，全场景轻松覆盖，真实用户案例已验证效果。
-- ⚡ 3 分钟极速接入，零门槛上手，即刻提升客服效率与客户满意度。
-- 🎁 高级套餐免费试用 14 天，先体验后付费：👉 [立即试用](https://gptkefu.com)
-- 📢 智能客服TG 频道：[@crisp_ai](https://t.me/crisp_ai)
+**卸载**
+如果装过 TUN 服务，先在"设置 → TUN 服务"里卸载服务，再到 Windows"设置 → 应用"里卸载 RHCloud。
 
----
+## 开发
 
-## Features
+本项目基于 [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) v2.5.10（Tauri + React），内核是 [mihomo](https://github.com/MetaCubeX/mihomo)。原有的界面已经全部替换成更简单的 RHCloud 界面，后端基本保留原样。
 
-- 基于性能强劲的 Rust 和 Tauri 2 框架
-- 内置[Clash.Meta(mihomo)](https://github.com/MetaCubeX/mihomo)内核，并支持切换 `Alpha` 版本内核。
-- 简洁美观的用户界面，支持自定义主题颜色、代理组/托盘图标以及 `CSS Injection`。
-- 配置文件管理和增强（Merge 和 Script），配置文件语法提示。
-- 系统代理和守卫、`TUN(虚拟网卡)` 模式。
-- 可视化节点和规则编辑
-- WebDav 配置备份和同步
+### 目录
 
-### FAQ
+| 路径 | 内容 |
+|---|---|
+| `src/rhcloud/` | RHCloud 界面：登录、首页、节点、设置，以及主题 |
+| `src/rhcloud/api.ts` | 面板接口（登录、获取订阅、套餐信息）和备用地址切换 |
+| `src/rhcloud/sync.ts` | 把订阅导入为唯一的配置 `RHCloud`，并定时更新 |
+| `src/rhcloud/storage.ts` | 本地保存登录状态 |
+| `src-tauri/` | Tauri 后端（Rust）：内核管理、系统代理、托盘、安装包 |
+| `branding/` | Logo 和应用图标源文件 |
+| `.github/workflows/rhcloud-windows.yml` | Windows 安装包构建与发布 |
 
-Refer to [Doc FAQ Page](https://clash-verge-rev.github.io/faq/windows.html)
+TUN 服务来自 [RHCloud-service](https://github.com/RHCloud1/RHCloud-service)，服务名是 `rhcloud_service`，不会和官方 Clash Verge 的服务冲突。
 
-### Donation
+### 本地运行
 
-[捐助Clash Verge Rev的开发](https://github.com/sponsors/clash-verge-rev)
+需要 Node.js、pnpm 和 Rust（版本见 `rust-toolchain.toml`）：
 
-## Development
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
-
-To run the development server, execute the following commands after all prerequisites for **Tauri** are installed:
-
-```shell
-pnpm i
-pnpm run prebuild
-pnpm dev
+```sh
+pnpm install
+pnpm run prebuild x86_64-pc-windows-msvc   # 下载 mihomo 内核和服务程序
+pnpm dev                                    # 开发模式运行
+pnpm build                                  # 生成安装包
 ```
 
-`pnpm dev` preserves the Development Channel's installed service state: an
-existing service is used, while a previously uninstalled service remains
-uninstalled and the app starts in Sidecar mode. Use `pnpm dev:service` to
-explicitly install or update the isolated development service before launch,
-or `pnpm dev:sidecar` to force the unprivileged Sidecar workflow.
+前端只做类型检查可以用 `pnpm exec tsrs -p . --noEmit`。完整构建需要较多内存，建议在 CI 上做。
 
-## Contributions
+### 构建与发布
 
-Issue and PR welcome!
+安装包由 GitHub Actions 的 **RHCloud Windows** 工作流构建：
 
-## Acknowledgement
+- 推送到 `main` 会自动构建，只修改文档时跳过。构建好的安装包在这次运行的 Artifacts 里。
+- 发布新版本：
+  1. 修改 `package.json` 和 `src-tauri/tauri.conf.json` 里的 `version`。
+  2. 推送时在提交信息里加 `[skip ci]`。
+  3. 在 Actions 里手动运行 **RHCloud Windows**，勾选 `release`。它会创建 `v<version>` 的 Release 并上传安装包。
 
-Clash Verge rev was based on or inspired by these projects and so on:
+上游的其他工作流都已停用。
 
-- [zzzgydi/clash-verge](https://github.com/zzzgydi/clash-verge): A Clash GUI based on tauri. Supports Windows, macOS and Linux.
-- [tauri-apps/tauri](https://github.com/tauri-apps/tauri): Build smaller, faster, and more secure desktop applications with a web frontend.
-- [Dreamacro/clash](https://github.com/Dreamacro/clash): A rule-based tunnel in Go.
-- [MetaCubeX/mihomo](https://github.com/MetaCubeX/mihomo): A rule-based tunnel in Go.
-- [Fndroid/clash_for_windows_pkg](https://github.com/Fndroid/clash_for_windows_pkg): A Windows/macOS GUI based on Clash.
-- [vitejs/vite](https://github.com/vitejs/vite): Next generation frontend tooling. It's fast!
+## 许可证
 
-## Privacy
-
-Clash Verge Rev 不收集任何用户数据，配置与日志仅保存在本地。详见[隐私政策](./PRIVACY.md)。
-
-Clash Verge Rev does not collect any user data; configuration and logs stay on
-your own device. See the [Privacy Policy](./PRIVACY.md) for details.
-
-## License
-
-GPL-3.0 License. See [License here](./LICENSE) for details.
+[GPL-3.0](./LICENSE)，与上游 Clash Verge Rev 相同。感谢 Clash Verge Rev、mihomo 和 Tauri 项目。
