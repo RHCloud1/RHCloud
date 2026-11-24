@@ -7,17 +7,20 @@ import {
   patchVergeConfig,
   updateProfile,
 } from '@/services/cmds'
+import { openExternalUrl } from '@/utils/open-external-url'
 
 import {
   AuthExpiredError,
   clashSubscribeUrl,
   fetchSubscription,
   login,
+  panelUrls,
+  quickLoginUrl,
   subscriptionStatus,
   SubscriptionRequiredError,
   type SubscriptionInfo,
 } from './api'
-import { storage } from './storage'
+import { hasFreshSession, storage } from './storage'
 
 export const PROFILE_NAME = 'RHCloud'
 
@@ -54,9 +57,31 @@ const withFreshToken = async <T>(run: (token: string) => Promise<T>) => {
   } catch (error) {
     if (!(error instanceof AuthExpiredError) || !session.password) throw error
     const token = await login(session.email, session.password)
-    storage.session = { ...session, token }
+    storage.session = { ...session, token, loginAt: Date.now() }
     return run(token)
   }
+}
+
+/** A session past 30 days signs in again with the saved password instead of logging out. */
+export const renewStaleSession = async () => {
+  const session = storage.session
+  if (hasFreshSession()) return true
+  if (!session?.token || !session.password) return false
+  try {
+    const token = await login(session.email, session.password)
+    storage.session = { ...session, token, loginAt: Date.now() }
+    return true
+  } catch {
+    return false
+  }
+}
+
+/** Opens a panel page in the browser, signed in when the panel hands out a login link. */
+export const openPanel = async (page: 'dashboard' | 'plan') => {
+  const url = await withFreshToken((token) => quickLoginUrl(token, page)).catch(
+    () => panelUrls[page](),
+  )
+  await openExternalUrl(url)
 }
 
 export const refreshSubscriptionInfo = () =>

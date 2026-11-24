@@ -7,10 +7,9 @@ import { useTrafficData } from '@/hooks/use-traffic-data'
 import { useTrafficGraphDataEnhanced } from '@/hooks/use-traffic-monitor'
 import { useVisibility } from '@/hooks/use-visibility'
 import { showNotice } from '@/services/notice-service'
-import { openExternalUrl } from '@/utils/open-external-url'
 import parseTraffic from '@/utils/parse-traffic'
 
-import { panelUrls, subscriptionMessage } from '../api'
+import { subscriptionMessage } from '../api'
 import {
   Button,
   Card,
@@ -26,6 +25,7 @@ import {
   useNodeGroups,
 } from '../hooks'
 import { storage } from '../storage'
+import { openPanel } from '../sync'
 import {
   BRAND_BLUE,
   BRAND_GRADIENT,
@@ -317,7 +317,7 @@ const AccountCard = () => {
             {email}
           </span>
         </div>
-        <LinkButton onClick={() => void openExternalUrl(panelUrls.dashboard())}>
+        <LinkButton onClick={() => void openPanel('dashboard')}>
           用户中心 ›
         </LinkButton>
       </div>
@@ -391,7 +391,7 @@ const AccountCard = () => {
         </Button>
         <Button
           variant={needsRenewal ? 'primary' : 'secondary'}
-          onClick={() => void openExternalUrl(panelUrls.plan())}
+          onClick={() => void openPanel('plan')}
           style={{ flex: 1 }}
         >
           {status === 'noPlan' ? '购买套餐' : '续费'}

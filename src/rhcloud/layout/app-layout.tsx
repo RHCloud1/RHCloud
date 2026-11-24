@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { Navigate, NavLink, Outlet } from 'react-router'
 
 import logo from '@/assets/image/rhcloud-logo.png'
@@ -12,7 +12,8 @@ import {
   useGlobalFollowsMain,
   useMainSelectsNode,
 } from '../hooks'
-import { hasFreshSession } from '../storage'
+import { hasFreshSession, storage } from '../storage'
+import { renewStaleSession } from '../sync'
 import { useRhTokens } from '../theme'
 
 const icon = (paths: ReactNode) => (
@@ -88,7 +89,28 @@ export const AppLayout = () => {
   useAutoSync()
   useGlobalFollowsMain()
   useMainSelectsNode()
+  const [renewing, setRenewing] = useState(
+    () => !hasFreshSession() && Boolean(storage.session?.password),
+  )
+  useEffect(() => {
+    if (renewing) void renewStaleSession().finally(() => setRenewing(false))
+  }, [renewing])
 
+  if (renewing)
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 14,
+          color: t.text2,
+        }}
+      >
+        正在登录…
+      </div>
+    )
   if (!hasFreshSession()) return <Navigate to="/login" replace />
 
   return (

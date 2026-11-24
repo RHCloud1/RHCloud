@@ -6,9 +6,7 @@ import { useServiceUninstaller } from '@/hooks/use-service-uninstaller'
 import { useSystemState } from '@/hooks/use-system-state'
 import { useVerge } from '@/hooks/use-verge'
 import { showNotice } from '@/services/notice-service'
-import { openExternalUrl } from '@/utils/open-external-url'
 
-import { panelUrls } from '../api'
 import {
   Button,
   Card,
@@ -18,6 +16,7 @@ import {
 } from '../components/ui'
 import { useCloud } from '../hooks'
 import { storage } from '../storage'
+import { openPanel } from '../sync'
 import { SIZE, useRhTokens } from '../theme'
 
 const THEMES = [
@@ -219,7 +218,7 @@ const SettingsPage = () => {
               <>
                 <div>{storage.session?.email ?? ''}</div>
                 <LinkButton
-                  onClick={() => void openExternalUrl(panelUrls.dashboard())}
+                  onClick={() => void openPanel('dashboard')}
                   style={{ fontSize: 13 }}
                 >
                   打开用户中心 ›

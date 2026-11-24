@@ -24,6 +24,7 @@ const FETCH_DOMAIN_CONFIG =
 
 const LOGIN_PATH = '/api/v1/passport/auth/login'
 const SUBSCRIBE_INFO_PATH = '/api/v1/user/getSubscribe'
+const QUICK_LOGIN_PATH = '/api/v1/user/getQuickLoginUrl'
 const CLIENT_SUBSCRIBE_PATH = '/api/v1/client/subscribe'
 const PROBE_PATH = '/api/v1/guest/comm/config'
 
@@ -310,6 +311,24 @@ export const subscriptionStatus = (
     return 'trafficExhausted'
   if (!info.subscribeUrl) return 'missingSubscribeUrl'
   return 'active'
+}
+
+/**
+ * One-time link (valid for a minute) that opens a panel page already signed in. The
+ * panel builds it on its own app_url, so it is moved onto the domain that answered.
+ */
+export const quickLoginUrl = async (token: string, redirect: string) => {
+  const root = parseResponse(
+    await execute(QUICK_LOGIN_PATH, {
+      method: 'POST',
+      token,
+      form: { redirect },
+    }),
+  )
+  const link: string = typeof root?.data === 'string' ? root.data : ''
+  const hash = link.indexOf('/#/login?verify=')
+  if (hash < 0) throw new ApiError('没有拿到登录链接')
+  return activeBaseUrl() + link.slice(hash)
 }
 
 /** Subscribe link in Clash Meta format; mihomo needs `flag=meta` from Xboard. */
